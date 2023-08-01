@@ -61,7 +61,7 @@ Train the model according to your needs by modifying the configuration file.Trai
 
 `python main.py --config ./config/kinetics-skeleton/test_joint_bone_motion.yaml`
 
-# ensemble
+# Ensemble
 
 The resulting test scores are fused by post-fusion, which is performed by the following command:
 
