@@ -33,7 +33,7 @@ Generate the motion data with:
 
 Forward fusion of data is performed by the following command：
 
-·python data_gen/merge_joint_bone_data.py`
+`python data_gen/merge_joint_bone_data.py`
 
 `python data_gen/merge_joint_bone_motion_data.py`
 
@@ -43,7 +43,9 @@ Forward fusion of data is performed by the following command：
 
 # Training & Testing
 
-Train the model according to your needs by modifying the configuration file.Train and test the model with the following commands：
+Train the model according to your needs by modifying the configuration file.When training different forward fusion flow information, the selection of the targeted adjacency matrix only requires modifying lines **319-322** and the corresponding lines **356-358** in the `model/agcn_stc_sl.py` file.
+
+Train and test the model with the following commands：
 
 `python main.py --config ./config/nturgbd-cross-subject/train_joint_bone.yaml`
 
