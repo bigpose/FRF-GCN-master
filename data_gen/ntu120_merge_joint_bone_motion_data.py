@@ -1,5 +1,5 @@
-# 操作人员：徐成龙
-# 操作时间：2023/5/28 15:42
+# operator：xcl
+# operating time：2023/5/28 15:42
 import os
 import numpy as np
 
