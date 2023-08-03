@@ -29,11 +29,11 @@ class forword_merge(nn.Module):
         self.stc2 = STC_Att(32, 4)
 
     def forword(self, x):
-        N, C, T, V, M = x.size()  # 其中N表示样本数, C表示通道数, T表示总帧数,V表示节点数,M表示视频中的人数
+        N, C, T, V, M = x.size() 
 
-        x = x.permute(0, 4, 3, 1, 2).contiguous().view(N, M * V * C, T)  # permute函数可以对任意高维矩阵进行转置
-        x = self.bn(x)  # contiguous一般与transpose，permute,view搭配使用
-        # 即使用transpose或permute进行维度变换后，调用contiguous，然后方可使用view对维度进行变形。
+        x = x.permute(0, 4, 3, 1, 2).contiguous().view(N, M * V * C, T) 
+        x = self.bn(x) 
+       
         x = x.view(N, M, V, C, T).permute(0, 3, 4, 2, 1)  # N,C,T,V,M
         x = x.permute(0, 4, 1, 2, 3).contiguous().view(N * M, C, T, V)
 
@@ -57,5 +57,5 @@ for dataset in datasets:
         data_bone = np.load('../data/{}/{}_data_bone.npy'.format(dataset, set))
         data_bone = forword_merge(data_bone)
         N, C, T, V, M = data_jpt.shape
-        data_jpt_bone = np.concatenate((data_jpt, data_bone), axis=1)  # 将关节和骨骼的矩阵在第一维度上进行拼接
+        data_jpt_bone = np.concatenate((data_jpt, data_bone), axis=1) 
         np.save('../data/{}/{}_data_joint_bone.npy'.format(dataset, set), data_jpt_bone)
