@@ -1,5 +1,5 @@
-# 操作人员：徐成龙
-# 操作时间：2023/3/28 8:56
+# operator：xcl
+# operating time：2023/3/28 8:56
 import math
 import numpy as np
 import torch
@@ -35,18 +35,18 @@ def bn_init(bn, scale):
     nn.init.constant_(bn.bias, 0)
 
 
-class unit_tcn(nn.Module):           # unit_tcn和unit_gcn对应layer部分
+class unit_tcn(nn.Module):      
     def __init__(self, in_channels, out_channels, kernel_size=9, stride=1):
         super(unit_tcn, self).__init__()
         pad = int((kernel_size - 1) / 2)
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=(kernel_size, 1), padding=(pad, 0),
-                              stride=(stride, 1))  # kernel_size为9*1的卷积核
+                              stride=(stride, 1))
 
         #self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=(kernel_size, 1), padding=(pad, 0),
          #                      stride=(stride, 1), dilation=(dilation, 1))
 
-        self.bn = nn.BatchNorm2d(out_channels)    # 批量归一化
-        self.relu = nn.ReLU()                     # 激活函数Relu
+        self.bn = nn.BatchNorm2d(out_channels)    
+        self.relu = nn.ReLU()                    
         conv_init(self.conv)
         bn_init(self.bn, 1)
 
@@ -55,15 +55,15 @@ class unit_tcn(nn.Module):           # unit_tcn和unit_gcn对应layer部分
        # x = self.relu(x)
         return x
 
-class unit_tcn1(nn.Module):           # unit_tcn和unit_gcn对应layer部分
+class unit_tcn1(nn.Module):       
     def __init__(self, in_channels, out_channels, kernel_size=9, stride=1):
         super(unit_tcn1, self).__init__()
         pad = int((kernel_size - 1) / 2)
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=(kernel_size, 1), padding=(pad, 0),
-                              stride=(stride, 1))  # kernel_size为9*1的卷积核
+                              stride=(stride, 1)) 
 
-        self.bn = nn.BatchNorm2d(out_channels)    # 批量归一化
-        self.relu = nn.ReLU()                     # 激活函数Relu
+        self.bn = nn.BatchNorm2d(out_channels)    
+        self.relu = nn.ReLU()                    
         conv_init(self.conv)
         bn_init(self.bn, 1)
 
@@ -84,7 +84,7 @@ def weights_init(m):
         if hasattr(m, 'bias') and m.bias is not None:
             m.bias.data.fill_(0)
 
-class MultiScale_Temporal_SL(nn.Module):  # 多尺度深度点卷积
+class MultiScale_Temporal_SL(nn.Module): 
     def __init__(self, in_channels, kernel_size=5, expand_ratio=0.25, stride=1, dilations=[1, 3], residual=True, residual_kernel_size=1):
         super().__init__()
         inner_channel = int(in_channels * expand_ratio)
@@ -109,7 +109,7 @@ class MultiScale_Temporal_SL(nn.Module):  # 多尺度深度点卷积
             nn.BatchNorm2d(compress_channel),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=(3,1), stride=(stride,1), padding=(1,0)),
-            nn.BatchNorm2d(compress_channel)  # 为什么还要加bn
+            nn.BatchNorm2d(compress_channel)  
         ))
 
         self.branches.append(nn.Sequential(
@@ -122,7 +122,7 @@ class MultiScale_Temporal_SL(nn.Module):  # 多尺度深度点卷积
         #     nn.BatchNorm2d(compress_channel),
         #     nn.ReLU(inplace=True),
         #     nn.AvgPool2d(kernel_size=(3,1), stride=(stride,1), padding=(1,0)),
-        #     nn.BatchNorm2d(compress_channel)  # 为什么还要加bn
+        #     nn.BatchNorm2d(compress_channel)  
         # ))
 
         # Residual connection
@@ -169,14 +169,14 @@ class TemporalConv(nn.Module):
         x = self.bn(x)
         return x
 
-class Temporal_SL(nn.Module):  # 时间沙漏层使用可分离卷积代替原始的TCN
+class Temporal_SL(nn.Module):  
     def __init__(self, channel, temporal_window_size=9, bias=True, reduct_ratio=2, stride=1, residual=True, **kwargs):
         super(Temporal_SL, self).__init__()
 
         padding = (temporal_window_size - 1) // 2
         inner_channel = channel // reduct_ratio
         self.act = nn.Hardswish()
-        # 深度卷积+点卷积+点卷积+深度卷积
+     
         self.depth_conv1 = nn.Sequential(
             nn.Conv2d(channel, channel, (temporal_window_size,1), 1, (padding,0), groups=16, bias=bias),
             nn.BatchNorm2d(channel),
@@ -221,7 +221,7 @@ class Zero_Layer(nn.Module):
     def forward(self, x):
         return 0
 
-class Temporal_SL_dilation2(nn.Module):  # 时间沙漏层使用膨胀卷积
+class Temporal_SL_dilation2(nn.Module): 
     def __init__(self, in_channels, temporal_window_size=5, bias=True, reduct_ratio=2, stride=1,
                  residual_kernel_size=1, residual=True, dilation=2, **kwargs):
         super(Temporal_SL_dilation2, self).__init__()
@@ -231,7 +231,7 @@ class Temporal_SL_dilation2(nn.Module):  # 时间沙漏层使用膨胀卷积
         pad2 = (residual_kernel_size - 1) // 2
         inner_channel = in_channels // reduct_ratio
         self.act = nn.Hardswish()
-        # 深度卷积+点卷积+点卷积+深度卷积(考虑dilation的改变)
+     
         self.depth_conv1 = nn.Sequential(
             nn.Conv2d(in_channels, in_channels, (temporal_window_size, 1), 1, (padding, 0), groups=16, bias=bias),
             nn.BatchNorm2d(in_channels),
@@ -269,15 +269,15 @@ class Temporal_SL_dilation2(nn.Module):  # 时间沙漏层使用膨胀卷积
         x = self.depth_conv2(x)
         return x + res
 
-class Temporal_SL_dilation(nn.Module):  # 时间沙漏层使用膨胀卷积
+class Temporal_SL_dilation(nn.Module): 
     def __init__(self, in_channels, temporal_window_size=5, bias=True, reduct_ratio=2, stride=1,
                  residual_kernel_size=1, residual=True, dilation=2, **kwargs):
         super(Temporal_SL_dilation, self).__init__()
 
-        padding = (temporal_window_size - 1) // 2  # 如果出现维度不一致，将padding改为TemporalConv中的pad
+        padding = (temporal_window_size - 1) // 2 
         inner_channel = in_channels // reduct_ratio
         self.act = nn.Hardswish()
-        # 深度卷积+点卷积+点卷积+深度卷积(考虑dilation的改变)
+      
         self.depth_conv1 = nn.Sequential(
             nn.Conv2d(in_channels, in_channels, (temporal_window_size, 1), 1, (padding, 0), groups=16, bias=bias),
             nn.BatchNorm2d(in_channels),
@@ -314,10 +314,10 @@ class Temporal_SL_dilation(nn.Module):  # 时间沙漏层使用膨胀卷积
 class unit_gcn(nn.Module):      # spatial GCN + bn + relu
     def __init__(self, in_channels, out_channels, A, coff_embedding=4, num_subset=3):
         super(unit_gcn, self).__init__()
-        inter_channels = out_channels // coff_embedding     # python中“//”是一个算术运算符，表示整数除法，它可以返回商的整数部分（向下取整）
+        inter_channels = out_channels // coff_embedding     
         self.inter_c = inter_channels
         self.PA = nn.Parameter(torch.from_numpy(A.astype(np.float32)))
-        # 将一个不可训练的类型Tensor转换成可以训练的类型parameter，成为了模型中根据训练可以改动的参数
+     
         nn.init.constant_(self.PA, 1e-6)
         self.A = Variable(torch.from_numpy(A.astype(np.float32)), requires_grad=False)
         self.num_subset = num_subset
@@ -358,9 +358,9 @@ class unit_gcn(nn.Module):      # spatial GCN + bn + relu
         # A = self.PA.cuda(x.get_device())
         y = None
         for i in range(self.num_subset):
-            A1 = self.conv_a[i](x).permute(0, 3, 1, 2).contiguous().view(N, V, self.inter_c * T)  # 论文中的N*CT
-            A2 = self.conv_b[i](x).view(N, self.inter_c * T, V)          # 论文中的CT*N
-            A1 = self.soft(torch.matmul(A1, A2) / A1.size(-1))  # N V V  # torch.matmul，实现张量矩阵A1和A2的乘积
+            A1 = self.conv_a[i](x).permute(0, 3, 1, 2).contiguous().view(N, V, self.inter_c * T) 
+            A2 = self.conv_b[i](x).view(N, self.inter_c * T, V)        
+            A1 = self.soft(torch.matmul(A1, A2) / A1.size(-1))  
             A1 = A1 + A[i]
             A2 = x.view(N, C * T, V)
             z = self.conv_d[i](torch.matmul(A2, A1).view(N, C, T, V))
@@ -370,7 +370,7 @@ class unit_gcn(nn.Module):      # spatial GCN + bn + relu
         y += self.down(x)
         return self.relu(y)
 
-# 联合TCN和GCN
+
 class TCN_GCN_unit(nn.Module):
     def __init__(self, in_channels, out_channels, A, stride=1, residual=True):
         super(TCN_GCN_unit, self).__init__()
@@ -436,15 +436,15 @@ class STC_Att(nn.Module):
 
     def forward(self, x):
         N, C, T, V = x.size()
-        x_t = x.mean(3, keepdims=True)                  # 输入特征在时间维度被平均
-        x_v = x.mean(2, keepdims=True).transpose(2, 3)  # 输入特征在空间维度被平均
-        x_att = self.fcn(torch.cat([x_t, x_v], dim=2))  # 将平均后的信息拼接在一起，通过fc层馈送压缩信息
-        x_t, x_v = torch.split(x_att, [T, V], dim=2)    # 再将其分成时间和空间
-        x_t_att = self.conv_t(x_t).sigmoid()            # 恢复通道维数，再由sigmoid激活
+        x_t = x.mean(3, keepdims=True)               
+        x_v = x.mean(2, keepdims=True).transpose(2, 3)  
+        x_att = self.fcn(torch.cat([x_t, x_v], dim=2)) 
+        x_t, x_v = torch.split(x_att, [T, V], dim=2)  
+        x_t_att = self.conv_t(x_t).sigmoid()          
         x_v_att = self.conv_v(x_v.transpose(2, 3)).sigmoid()
-        x_att_f = x_t_att * x_v_att                     # 求两者通道外积，由原先的特征图得到注意力图x_att
+        x_att_f = x_t_att * x_v_att                    
         x_att_ff = x * x_att_f
-        x_c_att = self.conv_c(x)                        # 通道注意力分数
+        x_c_att = self.conv_c(x)                      
         
         x_att = x_att_ff + x_c_att
         # x_att = x_att_ff + x_c_att
@@ -472,16 +472,16 @@ class STC_Att2(nn.Module):
         )
 
     def forward(self, x):
-        x_t = x.mean(3, keepdims=True)                  # 输入特征在时间维度被平均
-        x_v = x.mean(2, keepdims=True)                  # 输入特征在空间维度被平均
-        x_att_t = self.fcn(x_t)                         # 将平均后的信息拼接在一起，通过fc层馈送压缩信息
+        x_t = x.mean(3, keepdims=True)                
+        x_v = x.mean(2, keepdims=True)                 
+        x_att_t = self.fcn(x_t)                        
         x_att_v = self.fcn(x_v)
-        x_t_att = self.conv_t(x_att_t).sigmoid()        # 恢复通道维数，再由sigmoid激活
+        x_t_att = self.conv_t(x_att_t).sigmoid()       
         x_v_att = self.conv_v(x_att_v).sigmoid()
-        x_att_f = x_t_att * x_v_att                     # 求两者通道外积，由原先的特征图得到注意力图x_att
+        x_att_f = x_t_att * x_v_att                   
         x_att_ff = x * x_att_f
-        x_c_att = self.conv_c(x)                        # 通道注意力分数
-        x_att = x_att_ff + x_c_att                      # 融合三者注意力分数
+        x_c_att = self.conv_c(x)                      
+        x_att = x_att_ff + x_c_att                      
         x_att = self.add_attention(x_att)
         return x_att
 
@@ -507,13 +507,13 @@ class STC_Att3(nn.Module):
 
     def forward(self, x):
         N, C, T, V = x.size()
-        x_t = x.mean(3, keepdims=True)                          # 输入特征在时间维度被平均
-        x_v = x.mean(2, keepdims=True).transpose(2, 3)          # 输入特征在空间维度被平均
+        x_t = x.mean(3, keepdims=True)                        
+        x_v = x.mean(2, keepdims=True).transpose(2, 3)        
         x_c = x.mean(3, keepdims=True)
-        x_c = x_c.mean(2, keepdims=True)                        # 输入特征在通道维度被平均
-        x_att = self.fcn(torch.cat([x_t, x_v, x_c], dim=2))     # 将平均后的信息拼接在一起，通过fc层馈送压缩信息
-        x_t, x_v, x_c = torch.split(x_att, [T, V, 1], dim=2)    # 再将其分成时间和空间、通道
-        x_t_att = self.conv_t(x_t).sigmoid()                    # 恢复通道维数，再由sigmoid激活
+        x_c = x_c.mean(2, keepdims=True)                       
+        x_att = self.fcn(torch.cat([x_t, x_v, x_c], dim=2))    
+        x_t, x_v, x_c = torch.split(x_att, [T, V, 1], dim=2)   
+        x_t_att = self.conv_t(x_t).sigmoid()                    
         x_v_att = self.conv_v(x_v.transpose(2, 3)).sigmoid()
         x_c_att = self.conv_c(x_c).sigmoid()
         x_att_f = x_t_att * x_v_att * x_c_att
@@ -522,7 +522,7 @@ class STC_Att3(nn.Module):
         x_att = self.add_attention(x_att)
         return x_att
 
-class SELayer(nn.Module):                               # 挤压激励模块生成通道注意力分数
+class SELayer(nn.Module):                           
     def __init__(self, channel, reduction=16):
         super(SELayer, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
@@ -534,8 +534,8 @@ class SELayer(nn.Module):                               # 挤压激励模块生�
         )
     def forward(self, x):
         N, C, _, _ = x.size()
-        x_c1 = self.avg_pool(x).view(N, C)             # 对应Squeeze操作
-        x_c2 = self.fc(x_c1).view(N, C, 1, 1)          # 对应Excitation操作
+        x_c1 = self.avg_pool(x).view(N, C)           
+        x_c2 = self.fc(x_c1).view(N, C, 1, 1)        
         return x * x_c2.expand_as(x)
 
 class ST_Joint_Att(nn.Module):
@@ -554,13 +554,13 @@ class ST_Joint_Att(nn.Module):
 
     def forward(self, x):
         N, C, T, V = x.size()
-        x_t = x.mean(3, keepdims=True)                  # 输入特征在时间维度被平均
-        x_v = x.mean(2, keepdims=True).transpose(2, 3)  # 输入特征在空间维度被平均
-        x_att = self.fcn(torch.cat([x_t, x_v], dim=2))  # 将平均后的信息拼接在一起，通过fc层馈送压缩信息
-        x_t, x_v = torch.split(x_att, [T, V], dim=2)    # 再将其分成时间和空间
-        x_t_att = self.conv_t(x_t).sigmoid()            # 恢复通道维数，再由sigmoid激活
+        x_t = x.mean(3, keepdims=True)                  
+        x_v = x.mean(2, keepdims=True).transpose(2, 3) 
+        x_att = self.fcn(torch.cat([x_t, x_v], dim=2))  
+        x_t, x_v = torch.split(x_att, [T, V], dim=2)   
+        x_t_att = self.conv_t(x_t).sigmoid()          
         x_v_att = self.conv_v(x_v.transpose(2, 3)).sigmoid()
-        x_att = x_t_att * x_v_att                       # 求两者通道外积，由原先的特征图得到注意力图x_att
+        x_att = x_t_att * x_v_att                      
         return x_att
 
 
@@ -605,11 +605,11 @@ class Model(nn.Module):
         #    self.drop_out = lambda x: x
 
     def forward(self, x):
-        N, C, T, V, M = x.size()    # 其中N表示样本数, C表示通道数, T表示总帧数,V表示节点数,M表示视频中的人数
+        N, C, T, V, M = x.size()    
 
-        x = x.permute(0, 4, 3, 1, 2).contiguous().view(N, M * V * C, T)    # permute函数可以对任意高维矩阵进行转置
-        x = self.data_bn(x)  # contiguous一般与transpose，permute,view搭配使用
-                             # 即使用transpose或permute进行维度变换后，调用contiguous，然后方可使用view对维度进行变形。
+        x = x.permute(0, 4, 3, 1, 2).contiguous().view(N, M * V * C, T)    
+        x = self.data_bn(x)  
+                            
         x = x.view(N, M, V, C, T).permute(0, 3, 4, 2, 1)  # N,C,T,V,M
         x = x.permute(0, 4, 1, 2, 3).contiguous().view(N * M, C, T, V)
 
@@ -641,4 +641,4 @@ class Model(nn.Module):
         # x2, _ = torch.max(x, 3, keepdim=False)
         # x3, _ = torch.max(x2, 1, keepdim=False)
         # x = torch.cat((x1, x3), dim=-2)
-        return self.fc(x)    # 全连接分类
+        return self.fc(x)   
