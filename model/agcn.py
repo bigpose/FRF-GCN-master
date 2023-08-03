@@ -1,5 +1,4 @@
-# operator：xcl
-# operating time：2023/3/4 10:52
+
 import math
 
 import numpy as np
