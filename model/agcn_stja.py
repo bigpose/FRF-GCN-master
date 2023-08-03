@@ -1,5 +1,4 @@
-# operator：xcl
-# operating time：2023/3/21 15:24
+
 import math
 import numpy as np
 import torch
