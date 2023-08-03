@@ -1,5 +1,5 @@
-# 操作人员：徐成龙
-# 操作时间：2023/3/21 15:24
+# operator：xcl
+# operating time：2023/3/21 15:24
 import math
 import numpy as np
 import torch
@@ -34,15 +34,15 @@ def bn_init(bn, scale):
     nn.init.constant_(bn.bias, 0)
 
 
-class unit_tcn(nn.Module):           # unit_tcn和unit_gcn对应layer部分
+class unit_tcn(nn.Module):           
     def __init__(self, in_channels, out_channels, kernel_size=9, stride=1):
         super(unit_tcn, self).__init__()
         pad = int((kernel_size - 1) / 2)
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=(kernel_size, 1), padding=(pad, 0),
-                              stride=(stride, 1))  # kernel_size为9*1的卷积核
+                              stride=(stride, 1))  
 
-        self.bn = nn.BatchNorm2d(out_channels)    # 批量归一化
-        self.relu = nn.ReLU()                     # 激活函数Relu
+        self.bn = nn.BatchNorm2d(out_channels)    
+        self.relu = nn.ReLU()                     
         conv_init(self.conv)
         bn_init(self.bn, 1)
 
@@ -54,10 +54,10 @@ class unit_tcn(nn.Module):           # unit_tcn和unit_gcn对应layer部分
 class unit_gcn(nn.Module):      # spatial GCN + bn + relu
     def __init__(self, in_channels, out_channels, A, coff_embedding=4, num_subset=3):
         super(unit_gcn, self).__init__()
-        inter_channels = out_channels // coff_embedding     # python中“//”是一个算术运算符，表示整数除法，它可以返回商的整数部分（向下取整）
+        inter_channels = out_channels // coff_embedding    ）
         self.inter_c = inter_channels
         # self.PA = nn.Parameter(torch.from_numpy(A.astype(np.float32)))
-        # 将一个不可训练的类型Tensor转换成可以训练的类型parameter，成为了模型中根据训练可以改动的参数
+       
         # nn.init.constant_(self.PA, 1e-6)
         self.A = Variable(torch.from_numpy(A.astype(np.float32)), requires_grad=False)
         self.num_subset = num_subset
@@ -98,9 +98,9 @@ class unit_gcn(nn.Module):      # spatial GCN + bn + relu
 
         y = None
         for i in range(self.num_subset):
-            A1 = self.conv_a[i](x).permute(0, 3, 1, 2).contiguous().view(N, V, self.inter_c * T)  # 论文中的N*CT
-            A2 = self.conv_b[i](x).view(N, self.inter_c * T, V)          # 论文中的CT*N
-            A1 = self.soft(torch.matmul(A1, A2) / A1.size(-1))  # N V V  # torch.matmul，实现张量矩阵A1和A2的乘积
+            A1 = self.conv_a[i](x).permute(0, 3, 1, 2).contiguous().view(N, V, self.inter_c * T)  
+            A2 = self.conv_b[i](x).view(N, self.inter_c * T, V)          
+            A1 = self.soft(torch.matmul(A1, A2) / A1.size(-1))  # N V V  
             A1 = A1 + A[i]
             A2 = x.view(N, C * T, V)
             z = self.conv_d[i](torch.matmul(A2, A1).view(N, C, T, V))
@@ -110,7 +110,7 @@ class unit_gcn(nn.Module):      # spatial GCN + bn + relu
         y += self.down(x)
         return self.relu(y)
 
-# 联合TCN和GCN
+
 class TCN_GCN_unit(nn.Module):
     def __init__(self, in_channels, out_channels, A, stride=1, residual=True):
         super(TCN_GCN_unit, self).__init__()
@@ -145,13 +145,13 @@ class ST_Joint_Att(nn.Module):
 
     def forward(self, x):
         N, C, T, V = x.size()
-        x_t = x.mean(3, keepdims=True)                  # 输入特征在时间维度被平均
-        x_v = x.mean(2, keepdims=True).transpose(2, 3)  # 输入特征在空间维度被平均
-        x_att = self.fcn(torch.cat([x_t, x_v], dim=2))  # 将平均后的信息拼接在一起，通过fc层馈送压缩信息
-        x_t, x_v = torch.split(x_att, [T, V], dim=2)    # 再将其分成时间和空间
-        x_t_att = self.conv_t(x_t).sigmoid()            # 恢复通道维数，再由sigmoid激活
+        x_t = x.mean(3, keepdims=True)                   
+        x_v = x.mean(2, keepdims=True).transpose(2, 3)  
+        x_att = self.fcn(torch.cat([x_t, x_v], dim=2)) 
+        x_t, x_v = torch.split(x_att, [T, V], dim=2)    
+        x_t_att = self.conv_t(x_t).sigmoid()           
         x_v_att = self.conv_v(x_v.transpose(2, 3)).sigmoid()
-        x_att = x_t_att * x_v_att                       # 求两者通道外积，由原先的特征图得到注意力图x_att
+        x_att = x_t_att * x_v_att                      
         return x_att
 
 
@@ -187,11 +187,11 @@ class Model(nn.Module):
         bn_init(self.data_bn, 1)
 
     def forward(self, x):
-        N, C, T, V, M = x.size()    # 其中N表示样本数, C表示通道数, T表示总帧数,V表示节点数,M表示视频中的人数
+        N, C, T, V, M = x.size()    
 
-        x = x.permute(0, 4, 3, 1, 2).contiguous().view(N, M * V * C, T)    # permute函数可以对任意高维矩阵进行转置
-        x = self.data_bn(x)  # contiguous一般与transpose，permute,view搭配使用
-                             # 即使用transpose或permute进行维度变换后，调用contiguous，然后方可使用view对维度进行变形。
+        x = x.permute(0, 4, 3, 1, 2).contiguous().view(N, M * V * C, T)   
+        x = self.data_bn(x)  
+                            
         x = x.view(N, M, V, C, T).permute(0, 1, 3, 4, 2).view(N * M, C, T, V)  # N*M,C,T,V
 
         x = self.l1(x)
