@@ -1,5 +1,4 @@
-# 操作人员：徐成龙
-# 操作时间：2023/5/26 10:18
+
 import os
 import numpy as np
 
