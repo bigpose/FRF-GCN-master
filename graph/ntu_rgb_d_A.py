@@ -1,5 +1,5 @@
-# 操作人员：徐成龙
-# 操作时间：2023/3/5 10:20
+# operator：徐成龙
+# operating time：2023/3/5 10:20
 import sys
 
 sys.path.extend(['../'])
