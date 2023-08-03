@@ -1,5 +1,4 @@
-# 操作人员：徐成龙
-# 操作时间：2023/4/13 10:45
+
 import os
 import numpy as np
 from numpy.lib.format import open_memmap
