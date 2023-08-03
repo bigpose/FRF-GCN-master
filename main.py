@@ -9,7 +9,7 @@ import random
 import shutil
 import time
 from collections import OrderedDict
-# # 画图函数plt
+# # plt
 # import matplotlib.pyplot as plt
 
 import numpy as np
@@ -191,7 +191,7 @@ def get_parser():
 
 class Processor():
     """ 
-        Processor for Skeleton-based Action Recgnition  基于骨架的动作识别处理器
+        Processor for Skeleton-based Action Recgnition  
     """
 
     def __init__(self, arg):
@@ -245,12 +245,12 @@ class Processor():
         shutil.copy2(inspect.getfile(Model), self.arg.work_dir)
         print(Model)
 
-        # 计算模型parameters
+        # compute model parameters
         self.model = Model(**self.arg.model_args).cuda(output_device)
         total = count_params(self.model)
         print('The total number of parameters: ', total)
 
-        # 计算模型GFLOPs
+        # compute model GFLOPs
 
         self.model = Model(**self.arg.model_args).cuda(output_device)
         print(self.model)
@@ -516,7 +516,7 @@ class Processor():
             self.print_log('\tMean {} loss of {} batches: {}.'.format(
                 ln, len(self.data_loader[ln]), np.mean(loss_value)))
 
-        #     # 将损失值加到列表test_loss中
+        #     # Add the loss value to the list test_loss
         #     test_loss.append(np.mean(loss_value))
         #
             for k in self.arg.show_topk:
@@ -528,9 +528,9 @@ class Processor():
                         self.arg.work_dir, epoch + 1, ln), 'wb') as f:
                     pickle.dump(score_dict, f)
         #
-        # # 画损失函数变化曲线图，并将其保存在graph文件夹下，名为test_loss.jpg
+        # # Draw a graph of the variation of the loss function and save it in the graph folder named test_loss.jpg
         # plt.figure(figsize=(640, 480))
-        # plt.plot(test_loss, 'b', label='test_loss')  # 画蓝色线
+        # plt.plot(test_loss, 'b', label='test_loss')  # draw blue line
         # plt.ylabel('test_loss')
         # plt.xlabel('iter_num')
         # plt.legend()
@@ -593,10 +593,10 @@ def count_params(model):
 
 
 def import_class(name):
-    components = name.split('.')     # 查找所有的'.'间隔的内容，并用列表放置
-    mod = __import__(components[0])  # import return model   __import__() 函数用于动态加载类和函数
+    components = name.split('.')    
+    mod = __import__(components[0])  
     for comp in components[1:]:
-        mod = getattr(mod, comp)  # getattr() 函数用于返回一个对象comp属性值 【针对上边例子，这里就是要获取feeder.py模块文件中的Feeder类，以供对应位置使用】
+        mod = getattr(mod, comp)
     return mod
 
 
