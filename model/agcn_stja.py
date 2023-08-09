@@ -212,4 +212,4 @@ class Model(nn.Module):
         x = x.view(N, M, c_new, -1)
         x = x.mean(3).mean(1)
 
-        return self.fc(x)    # 全连接分类
+        return self.fc(x)    
