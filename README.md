@@ -21,9 +21,9 @@ Download the raw data from [NTU-RGB+D](https://github.com/shahroudy/NTURGB-D) an
 
 Processes data and generates skeletal joint data.
 
-`python data_gen/ntu_gendata.py`
+```python data_gen/ntu_gendata.py```
 
-`python data_gen/kinetics-gendata.py`
+```python data_gen/kinetics-gendata.py```
 
 Generate the bone data with:
 
