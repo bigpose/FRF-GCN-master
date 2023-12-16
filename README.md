@@ -112,3 +112,16 @@ The resulting test scores are fused by post-fusion, which is performed by the fo
 ```
 python ensemble.py
 ```
+# Acknowledgements
+
+Our FRF-GCN has been inspired by previous research, and we thank the authors of the following studies for their significant contributions!
+- [ST-GCN](https://github.com/yysijie/st-gcn)
+- [2s-AGCN](https://github.com/lshiwjx/2s-AGCN)
+- [EfficientGCN](https://github.com/yfsong0709/EfficientGCNv1)
+
+# Citation
+
+If you find this work helpful, please cite our work:
+```
+
+```
