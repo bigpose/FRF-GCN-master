@@ -1,6 +1,6 @@
 # FRF-GCN-master
 The overall structure of FRF-GCN is shown below.
-![image](https://github.com/sunbeam-kkt/FRF-GCN-master/assets/117554619/57ceaabf-7cbe-45be-936b-e0e9f72b92c2)
+![image](https://github.com/sunbeam-kkt/FRF-GCN-master/assets/117554619/bb0d71bf-924e-408f-99fe-496498bd9844)
 # Data Preparation
 Download the raw data from [NTU-RGB+D](https://github.com/shahroudy/NTURGB-D) and [Skeleton-Kinetics](https://github.com/yysijie/st-gcn). Then put them under the data directory:
 - data/
