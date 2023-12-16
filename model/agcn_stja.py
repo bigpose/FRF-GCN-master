@@ -55,10 +55,10 @@ class unit_gcn(nn.Module):      # spatial GCN + bn + relu
         super(unit_gcn, self).__init__()
         inter_channels = out_channels // coff_embedding    ）
         self.inter_c = inter_channels
-        # self.PA = nn.Parameter(torch.from_numpy(A.astype(np.float32)))
+        self.PA = nn.Parameter(torch.from_numpy(A.astype(np.float32)))
        
-        # nn.init.constant_(self.PA, 1e-6)
-        self.A = Variable(torch.from_numpy(A.astype(np.float32)), requires_grad=False)
+        nn.init.constant_(self.PA, 1e-6)
+        # self.A = Variable(torch.from_numpy(A.astype(np.float32)), requires_grad=False)
         self.num_subset = num_subset
 
         self.conv_a = nn.ModuleList()
@@ -92,8 +92,8 @@ class unit_gcn(nn.Module):      # spatial GCN + bn + relu
 
     def forward(self, x):
         N, C, T, V = x.size()
-        A = self.A.cuda(x.get_device())
-        # A = A + self.PA
+        # A = self.A.cuda(x.get_device())
+        A = A + self.PA
 
         y = None
         for i in range(self.num_subset):
