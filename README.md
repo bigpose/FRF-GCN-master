@@ -124,7 +124,7 @@ Our FRF-GCN has been inspired by previous research, and we thank the authors of 
 
 If you find this work helpful, please cite our work:
 ```
-
+Yun, X., Xu, C., Riou, K., Dong, K., Sun, Y., Li, S., Subrin, K., & Le Callet, P. (2024). Behavioral Recognition of Skeletal Data Based on Targeted Dual Fusion Strategy. Proceedings of the AAAI Conference on Artificial Intelligence, 38(7), 6917-6925. https://doi.org/10.1609/aaai.v38i7.28517
 ```
 # Contact
 
