@@ -1,5 +1,5 @@
 # FRF-GCN-master
-Behavioral Recognition of Skeletal Data Based on Targeted  Dual Fusion Strategy in AAAI2024.
+_Behavioral Recognition of Skeletal Data Based on Targeted  Dual Fusion Strategy in AAAI2024._
 The overall structure of FRF-GCN is shown below.
 ![image](https://github.com/sunbeam-kkt/FRF-GCN-master/assets/117554619/bb0d71bf-924e-408f-99fe-496498bd9844)
 # Abstract
